@@ -2,7 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using MerkezBankasıRestApi.Services;
 using MerkezBankasıRestApi.Data;
+using MerkezBankasıRestApi.Kurlar;
 using MerkezBankasıRestApi.Controllers;
+using Hangfire;
 
 namespace MerkezBankasıRestApi
 {
@@ -18,7 +20,12 @@ namespace MerkezBankasıRestApi
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddScoped<IMerkezBankasi, MerkezBankasiServisi>();
+            builder.Services.AddHangfire(config => config
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+		        .UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+			builder.Services.AddHangfireServer();
+			builder.Services.AddScoped<IMerkezBankasi, MerkezBankasiServisi>();
             builder.Services.AddDbContext<DataContext>();
 
             var app = builder.Build();
@@ -34,10 +41,15 @@ namespace MerkezBankasıRestApi
 
             app.UseAuthorization();
 
-
             app.MapControllers();
 
-            app.Run();
+			app.UseHangfireDashboard();
+
+			app.MapHangfireDashboard();
+
+			RecurringJob.AddOrUpdate<IMerkezBankasi>(x => x.AutoRun(), "0 * * ? * *");
+
+			app.Run();
         }
     }
 }

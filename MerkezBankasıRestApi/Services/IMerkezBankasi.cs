@@ -5,6 +5,7 @@ namespace MerkezBankasıRestApi.Services
 {
     public interface IMerkezBankasi
     {
-        public Task<ActionResult<List<ResponseDataKur>>> Run(RequestData request);
+        public Task<ActionResult<List<EskiKur>>> Run(RequestData request);
+        public Task<ActionResult<List<OtoKur>>> AutoRun();
     }
 }

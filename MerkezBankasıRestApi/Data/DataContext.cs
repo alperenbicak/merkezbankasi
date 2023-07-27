@@ -17,7 +17,8 @@ namespace MerkezBankasıRestApi.Data
             optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=MerkezBankasi;Trusted_Connection=true;TrustServerCertificate=true;");
 
         }
-        public DbSet<ResponseDataKur> Response { get; set; }
+		public DbSet<EskiKur> EskiKurlar { get; set; }
+		public DbSet<OtoKur> OtoKurlar { get; set; }
     }
 }
 

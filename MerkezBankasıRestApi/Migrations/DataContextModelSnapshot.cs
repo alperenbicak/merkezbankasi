@@ -21,7 +21,7 @@ namespace MerkezBankasıRestApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("MerkezBankasıRestApi.Kurlar.ResponseDataKur", b =>
+            modelBuilder.Entity("MerkezBankasıRestApi.Kurlar.EskiKur", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -58,7 +58,43 @@ namespace MerkezBankasıRestApi.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Response");
+                    b.ToTable("EskiKurlar");
+                });
+
+            modelBuilder.Entity("MerkezBankasıRestApi.Kurlar.OtoKur", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("Adi")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("AlisKuru")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Birimi")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("EfektifAlisKuru")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("EfektifSatisKuru")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Kodu")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("SatisKuru")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("OtoKurlar");
                 });
 #pragma warning restore 612, 618
         }

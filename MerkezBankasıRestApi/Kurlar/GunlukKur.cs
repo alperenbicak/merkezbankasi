@@ -11,24 +11,28 @@ namespace MerkezBankasıRestApi.Kurlar
         public bool IsBugun { get; set; }
 
     }
-    public class ResponseDataKur
+    public class EskiKur
     {
         public int id { get; set; }
-        public string Tarih { get; set; }
-        public string Kodu { get; set; }
+		public string Tarih { get; set; }
+		public string Kodu { get; set; }
         public string Adi { get; set; }
         public int Birimi { get; set; }
         public decimal AlisKuru { get; set; }
         public decimal SatisKuru { get; set; }
         public decimal EfektifAlisKuru { get; set; }
         public decimal EfektifSatisKuru { get; set; }
-        //public List<ResponseDataKur> Response { get; set; } 
     }
-    //public class ResponseData
-    //{
-
-    //    public List<ResponseDataKur> Data { get; set; }
-    //    public string Hata { get; set; }
-    //}
+	public class OtoKur
+	{
+		public int id { get; set; }
+		public string Kodu { get; set; }
+		public string Adi { get; set; }
+		public int Birimi { get; set; }
+		public decimal AlisKuru { get; set; }
+		public decimal SatisKuru { get; set; }
+		public decimal EfektifAlisKuru { get; set; }
+		public decimal EfektifSatisKuru { get; set; }
+	}
 
 }

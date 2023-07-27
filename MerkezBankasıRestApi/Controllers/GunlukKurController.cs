@@ -4,6 +4,7 @@ using System.Text;
 using System;
 using System.Xml;
 using MerkezBankasıRestApi.Services;
+using Hangfire;
 
 namespace merkezbankasi
 {
@@ -18,10 +19,10 @@ namespace merkezbankasi
         }
 
         [HttpPost]
-        public Task<ActionResult<List<ResponseDataKur>>> Run(RequestData request)
+        public Task<ActionResult<List<EskiKur>>> Run(RequestData request)
         {
             var result = _merkezBankasi.Run(request);
-            return result;
+			return result;
             
         }
     }
