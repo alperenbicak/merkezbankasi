@@ -41,7 +41,6 @@ namespace MerkezBankasıRestApi.Services
 				kur.EfektifAlisKuru = Convert.ToDecimal("0" + node["BanknoteBuying"].InnerText.Replace(".", ","));
 				kur.EfektifSatisKuru = Convert.ToDecimal("0" + node["BanknoteSelling"].InnerText.Replace(".", ","));
 				_context.OtoKurlar.Add(kur);
-                await Console.Out.WriteLineAsync("Database Updated");
             }
 			await _context.SaveChangesAsync();
 			return await _context.OtoKurlar.ToListAsync();

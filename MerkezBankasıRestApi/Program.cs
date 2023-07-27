@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore.Design;
 using MerkezBankasıRestApi.Services;
 using MerkezBankasıRestApi.Data;
 using MerkezBankasıRestApi.Kurlar;
-using MerkezBankasıRestApi.Controllers;
 using Hangfire;
 
 namespace MerkezBankasıRestApi
@@ -47,7 +46,7 @@ namespace MerkezBankasıRestApi
 
 			app.MapHangfireDashboard();
 
-			RecurringJob.AddOrUpdate<IMerkezBankasi>(x => x.AutoRun(), "0 * * ? * *");
+			RecurringJob.AddOrUpdate<IMerkezBankasi>(x => x.AutoRun(), "00 30 15 ? * *",TimeZoneInfo.Local);
 
 			app.Run();
         }
