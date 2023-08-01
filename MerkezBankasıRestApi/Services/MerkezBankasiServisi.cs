@@ -48,7 +48,7 @@ namespace MerkezBankasıRestApi.Services
 
 		public async Task<ActionResult<List<EskiKur>>> Run(RequestData request)
         {
-            string tcmblink = string.Format("https://www.tcmb.gov.tr/kurlar/{0}.xml", (request.IsBugun) ? ("today") : string.Format("{2}{1}/{0}{1}{2}"
+            string tcmblink = string.Format("https://www.tcmb.gov.tr/kurlar/{0}.xml",string.Format("{2}{1}/{0}{1}{2}"
                     , request.Gun.ToString().PadLeft(2, '0'), request.Ay.ToString().PadLeft(2, '0'), request.Yil.ToString()));
             XmlDocument doc = new XmlDocument();
             doc.Load(tcmblink);
@@ -64,8 +64,7 @@ namespace MerkezBankasıRestApi.Services
             {
                 EskiKur kur = new EskiKur();
                 kur.id = i;
-                kur.Tarih = (request.IsBugun) ? ("bugun") : string.Format("{0}/{1}/{2}"
-                    , request.Gun.ToString().PadLeft(2, '0'), request.Ay.ToString().PadLeft(2, '0'), request.Yil.ToString());
+                kur.Tarih = string.Format("{0}/{1}/{2}", request.Gun.ToString().PadLeft(2, '0'), request.Ay.ToString().PadLeft(2, '0'), request.Yil.ToString());
                 kur.Kodu = node.Attributes["Kod"].Value;
                 kur.Adi = node["Isim"].InnerText;
                 kur.Birimi = int.Parse(node["Unit"].InnerText);
