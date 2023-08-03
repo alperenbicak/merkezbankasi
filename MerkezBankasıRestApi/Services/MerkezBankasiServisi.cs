@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MerkezBankasıRestApi.Kurlar;
 using MerkezBankasıRestApi.Data;
 using System.Text;
 using System.Xml;
 using System.Data;
 using Azure.Core;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace MerkezBankasıRestApi.Services 
 {
@@ -19,7 +19,6 @@ namespace MerkezBankasıRestApi.Services
         {
             _context = context;
         }
-
 		public async Task<ActionResult<List<OtoKur>>> AutoRun()
 		{
             string tcmblink ="https://www.tcmb.gov.tr/kurlar/today.xml";
@@ -36,9 +35,9 @@ namespace MerkezBankasıRestApi.Services
 				kur.Kodu = node.Attributes["Kod"].Value;
 				kur.Adi = node["Isim"].InnerText;
 				kur.Birimi = int.Parse(node["Unit"].InnerText);
-				kur.AlisKuru = Convert.ToDecimal("0" + node["ForexBuying"].InnerText.Replace(".", ","));
-				kur.SatisKuru = Convert.ToDecimal("0" + node["ForexSelling"].InnerText.Replace(".", ","));
-				kur.EfektifAlisKuru = Convert.ToDecimal("0" + node["BanknoteBuying"].InnerText.Replace(".", ","));
+                kur.AlisKuru = Convert.ToDecimal("0" + node["ForexBuying"].InnerText.Replace(".", ","));
+                kur.SatisKuru = Convert.ToDecimal("0" + node["ForexSelling"].InnerText.Replace(".", ","));
+                kur.EfektifAlisKuru = Convert.ToDecimal("0" + node["BanknoteBuying"].InnerText.Replace(".", ","));
 				kur.EfektifSatisKuru = Convert.ToDecimal("0" + node["BanknoteSelling"].InnerText.Replace(".", ","));
 				_context.OtoKurlar.Add(kur);
             }
@@ -48,34 +47,51 @@ namespace MerkezBankasıRestApi.Services
 
 		public async Task<ActionResult<List<EskiKur>>> Run(RequestData request)
         {
-            string tcmblink = string.Format("https://www.tcmb.gov.tr/kurlar/{0}.xml",string.Format("{2}{1}/{0}{1}{2}"
-                    , request.Gun.ToString().PadLeft(2, '0'), request.Ay.ToString().PadLeft(2, '0'), request.Yil.ToString()));
+
+            string tcmblink = string.Format("https://www.tcmb.gov.tr/kurlar/{0}.xml", string.Format("{2}{1}/{0}{1}{2}"
+                        , request.Gun.ToString().PadLeft(2, '0'), request.Ay.ToString().PadLeft(2, '0'), request.Yil.ToString()));
             XmlDocument doc = new XmlDocument();
-            doc.Load(tcmblink);
+            try
+            {
+                doc.Load(tcmblink);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
             if (doc.SelectNodes("Tarih_Date").Count < 1)
             {
                 return null;
             }
+            
 			foreach (EskiKur kur in _context.EskiKurlar)
 			{
 				_context.EskiKurlar.Remove(kur);
 			}
-			foreach (XmlNode node in doc.SelectNodes("Tarih_Date")[0].ChildNodes)
+            try 
             {
-                EskiKur kur = new EskiKur();
-                kur.id = i;
-                kur.Tarih = string.Format("{0}/{1}/{2}", request.Gun.ToString().PadLeft(2, '0'), request.Ay.ToString().PadLeft(2, '0'), request.Yil.ToString());
-                kur.Kodu = node.Attributes["Kod"].Value;
-                kur.Adi = node["Isim"].InnerText;
-                kur.Birimi = int.Parse(node["Unit"].InnerText);
-                kur.AlisKuru = Convert.ToDecimal("0" + node["ForexBuying"].InnerText.Replace(".", ","));
-                kur.SatisKuru = Convert.ToDecimal("0" + node["ForexSelling"].InnerText.Replace(".", ","));
-                kur.EfektifAlisKuru = Convert.ToDecimal("0" + node["BanknoteBuying"].InnerText.Replace(".", ","));
-                kur.EfektifSatisKuru = Convert.ToDecimal("0" + node["BanknoteSelling"].InnerText.Replace(".", ","));
-                _context.EskiKurlar.Add(kur);
+                foreach (XmlNode node in doc.SelectNodes("Tarih_Date")[0].ChildNodes)
+                {
+                    EskiKur kur = new EskiKur();
+                    kur.id = i;
+                    kur.Tarih = string.Format("{0}/{1}/{2}", request.Gun.ToString().PadLeft(2, '0'), request.Ay.ToString().PadLeft(2, '0'), request.Yil.ToString());
+                    kur.Kodu = node.Attributes["Kod"].Value;
+                    kur.Adi = node["Isim"].InnerText;
+                    kur.Birimi = int.Parse(node["Unit"].InnerText);
+                    kur.AlisKuru = Convert.ToDecimal("0" + node["ForexBuying"].InnerText.Replace(".", ","));
+                    kur.SatisKuru = Convert.ToDecimal("0" + node["ForexSelling"].InnerText.Replace(".", ","));
+                    kur.EfektifAlisKuru = Convert.ToDecimal("0" + node["BanknoteBuying"].InnerText.Replace(".", ","));
+                    kur.EfektifSatisKuru = Convert.ToDecimal("0" + node["BanknoteSelling"].InnerText.Replace(".", ","));
+                    _context.EskiKurlar.Add(kur);
+                    await _context.SaveChangesAsync();
+                }
+                //await _context.SaveChangesAsync();
+                return await _context.EskiKurlar.ToListAsync();
             }
-            await _context.SaveChangesAsync();
-            return await _context.EskiKurlar.ToListAsync();
+			catch 
+            {
+                return await _context.EskiKurlar.ToListAsync();
+            }
             
 
         }

@@ -17,11 +17,11 @@ namespace merkezbankasi
         {
             _merkezBankasi = merkezBankasi;
         }
-
         [HttpPost]
-        public Task<ActionResult<List<EskiKur>>> Run(RequestData request)
+        public async Task<ActionResult<List<EskiKur>>> Run(RequestData request)
         {
-            var result = _merkezBankasi.Run(request);
+            var result = await _merkezBankasi.Run(request);
+            if (result is null) { return BadRequest("Belirli tarihteki kurlar bulunamadı."); }
 			return result;
             
         }
