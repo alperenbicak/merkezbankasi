@@ -24,10 +24,6 @@ namespace MerkezBankasıRestApi.Services
             string tcmblink ="https://www.tcmb.gov.tr/kurlar/today.xml";
 			XmlDocument doc = new XmlDocument();
 			doc.Load(tcmblink);
-            foreach(OtoKur kur in _context.OtoKurlar)
-            {
-				_context.OtoKurlar.Remove(kur);
-			}
 			foreach (XmlNode node in doc.SelectNodes("Tarih_Date")[0].ChildNodes)
 			{
 				OtoKur kur = new OtoKur();
